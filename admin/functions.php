@@ -129,7 +129,7 @@ function IsLoggedIn(){
     return false;
 }
 
-
+/****Check if user is logged in and redirect to given location *****/
 function IsLoggedInAndRedirect($redirectlocation=null){
     if(IsLoggedIn()){
         Redirect($redirectlocation);
@@ -169,6 +169,22 @@ function LoginUser($loginusername,$loginpassword)
             return false;
         }
         return true;
+    }
+}
+
+/****** Check If Logged user liked given post******/
+function IsPostLikedByUser($currentpost=""){
+    global $sqlconnection;
+    $currentuser = isset($_SESSION['userid']) ? $_SESSION['userid'] : "";
+    $postfetchquery = mysqli_prepare($sqlconnection,"SELECT USERID,POSTID FROM LIKES WHERE POSTID = ? AND USERID = ?");
+    mysqli_stmt_bind_param($postfetchquery,"ii",$currentpost,$currentuser);
+    mysqli_stmt_execute($postfetchquery);
+    mysqli_stmt_store_result($postfetchquery);
+    if(mysqli_stmt_affected_rows($postfetchquery)){
+        return true;
+    }
+    else{
+        return false;
     }
 }
 /***** Add new Category ***********/

@@ -71,10 +71,10 @@ include "./admin/includes/AdminFunctions.php";
                             </h1>  
                             <!-- Blog Post -->
                             <h2>
-                            <a href="post.php?p_id=<?php echo $postid; ?>"><?php echo $posttitle ;?></a>
+                            <a href="/cms/post.php?p_id=<?php echo $postid; ?>"><?php echo $posttitle ;?></a>
                             </h2>
                             <p class="lead">
-                                by <a href="author.php?author=<?php echo $postauthor ?>&p_id=<?php echo $postid; ?>"><?php echo $postauthor ?></a>
+                                by <a href="/cms/author.php?author=<?php echo $postauthor ?>&p_id=<?php echo $postid; ?>"><?php echo $postauthor ?></a>
                                 
                             </p>
                             <p><span class="glyphicon glyphicon-time"></span> <?php echo $postdate ?></p>
@@ -94,7 +94,7 @@ include "./admin/includes/AdminFunctions.php";
                     }                    
                 }
                 else{
-                    header("Location: index");
+                    header("Location: /cms");
                     exit;
                 }
                 

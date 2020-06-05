@@ -1,0 +1,11 @@
+.pager li .active_link{
+    background-color: #4db2ec;
+    color: #fff;
+    border-color: #4db2ec;
+    font-family: open sans,arial,sans-serif;
+    font-size: 12px;
+    padding: 5px 11px;
+    border: 1px solid #e3e3e3;
+    display: inline-block;
+    margin: 0 8px 8px 0;
+}

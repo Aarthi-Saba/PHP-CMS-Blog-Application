@@ -35,6 +35,32 @@ function ChartValues($tablename,$colname,$condition)
     }
     return $specificrecordscount;
 }
+
+/******* Calculate Post Chart Value for Specific Users ****/
+function UserPostChartValues($poststatus)
+{
+    global $sqlconnection;
+    $currentuser = GetUserName();
+    $specificpostsquery = mysqli_prepare($sqlconnection,"SELECT * FROM POST WHERE LOWER(POST_STATUS) = ? AND                                          POST_AUTHOR_USER_NAME = ? ");
+    mysqli_stmt_bind_param($specificpostsquery,"ss",$poststatus,$currentuser);
+    mysqli_stmt_execute($specificpostsquery);
+    mysqli_stmt_store_result($specificpostsquery);
+    $specificpostscount = mysqli_stmt_num_rows($specificpostsquery);
+    return $specificpostscount;    
+}
+/******* Calculate Comment Chart Value for Specific Users ****/
+function UserCommentsChartValues($commentstatus)
+{
+    global $sqlconnection;
+    $usermail = isset($_SESSION['useremail']) ? $_SESSION['useremail'] : "";
+    $specificcommentquery = mysqli_prepare($sqlconnection,"SELECT * FROM COMMENT WHERE LOWER(COMMENT_STATUS) = ? AND                                          COMMENT_EMAIL = ? ");
+    mysqli_stmt_bind_param($specificcommentquery,"ss",$commentstatus,$usermail);
+    mysqli_stmt_execute($specificcommentquery);
+    mysqli_stmt_store_result($specificcommentquery);
+    $specificommentcount = mysqli_stmt_num_rows($specificcommentquery);
+    return $specificommentcount;    
+}
+
 /****** Check if user already exists before registering ***/
 function UserExists($inputusername)
 {
@@ -161,7 +187,8 @@ function LoginUser($loginusername,$loginpassword)
             $_SESSION['username'] = $username;
             $_SESSION['firstname'] = $userfirstname;
             $_SESSION['lastname'] = $userlastname;
-            $_SESSION['userrole'] = $userrole;  
+            $_SESSION['userrole'] = $userrole;
+            $_SESSION['useremail'] = $useremail;
             Redirect('/cms/admin');
         }
         else{
@@ -171,6 +198,7 @@ function LoginUser($loginusername,$loginpassword)
         return true;
     }
 }
+
 
 /****** Check If Logged user liked given post******/
 function IsPostLikedByUser($currentpost=""){
@@ -186,6 +214,48 @@ function IsPostLikedByUser($currentpost=""){
     else{
         return false;
     }
+}
+/******* Get desired Count from given table and condition*****/
+function GetCount($tablename,$colname,$colvalue,$coltype)
+{
+    global $sqlconnection;
+    $countquery = mysqli_prepare($sqlconnection,"SELECT * FROM ". $tablename ." WHERE ". $colname ." = ?");
+    mysqli_stmt_bind_param($countquery,$coltype,$colvalue);
+    mysqli_stmt_execute($countquery);
+    mysqli_stmt_store_result($countquery);
+    return mysqli_stmt_num_rows($countquery);    
+}
+/********* Get Post count by Current User *******/
+function UserPostCount()
+{
+    $postcolvalue = GetUserName();
+    $posttable = 'POST';
+    $postcolname = 'POST_AUTHOR_USER_NAME';
+    $postcoltype = "s";
+    return GetCount($posttable,$postcolname,$postcolvalue,$postcoltype);
+    
+}
+/********* Get Comments count by Current User *******/
+function UserCommentCount()
+{
+    $commentcolvalue = isset($_SESSION['useremail']) ? $_SESSION['useremail'] : "";
+    
+    $commenttable = 'COMMENT';
+    $commentcolname = 'COMMENT_EMAIL';
+    $commentcoltype = "s";
+    return GetCount($commenttable,$commentcolname,$commentcolvalue,$commentcoltype);
+    
+}
+/******** Get Category count for posts by current user ********/
+function UserCategoryCount()
+{
+    global $sqlconnection;
+    $username = GetUserName();
+    $usercategoryquery = mysqli_prepare($sqlconnection,"SELECT DISTINCT POST_CATEGORY_ID FROM POST WHERE                                                        POST_AUTHOR_USER_NAME =?");
+    mysqli_stmt_bind_param($usercategoryquery,"s",$username);
+    mysqli_stmt_execute($usercategoryquery);
+    mysqli_stmt_store_result($usercategoryquery);
+    return mysqli_stmt_num_rows($usercategoryquery);    
 }
 /***** Add new Category ***********/
 function AddCategory()
@@ -231,6 +301,26 @@ function ShowCategory()
         echo "</tr>";
     } 
     mysqli_stmt_close($selectquery);
+}
+/********** Display All categories User posted *************/
+function ShowUserCategory()
+{
+    global $sqlconnection;
+    $username = GetUserName();
+    $usercategoryquery = mysqli_prepare($sqlconnection,"SELECT DISTINCT POST.POST_CATEGORY_ID,CATEGORYTITLE FROM CATEGORY
+                                                        LEFT JOIN POST ON CATEGORY.CATEGORYID=POST.POST_CATEGORY_ID WHERE   POST_AUTHOR_USER_NAME =?");
+    mysqli_stmt_bind_param($usercategoryquery,"s",$username);
+    mysqli_stmt_execute($usercategoryquery);
+    mysqli_stmt_store_result($usercategoryquery);
+    mysqli_stmt_bind_result($usercategoryquery,$id,$title);  
+    while(mysqli_stmt_fetch($usercategoryquery))
+    {
+        echo "<tr>";
+        echo "<td>{$id}</td>";
+        echo "<td>{$title}</td>";
+        echo "</tr>";
+    } 
+    mysqli_stmt_close($usercategoryquery);
 }
 /******** Delete the selected category *************/
 function DeleteCategory()

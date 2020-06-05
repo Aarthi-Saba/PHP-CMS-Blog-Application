@@ -53,5 +53,5 @@ include "includes/AdminHeader.php";
 
     </div>
     <!-- /#wrapper -->
-
+</body>
 <?php include "includes/AdminFooter.php" ?>

@@ -8,6 +8,7 @@ if(isset($_GET['p_id']))
     while($row = mysqli_fetch_assoc($allposts))
     {
         $postid = $row['Id'];
+        $postauthorusername = $row['Post_Author_User_Name'];
         $postauthor = $row['Post_Author'];
         $posttitle = $row['Post_Title'];
         $postimage = $row['Post_Image'];
@@ -22,6 +23,7 @@ if(isset($_GET['p_id']))
 if(isset($_POST['update']))
 {
     $title = Escape($_POST['title']);
+    $authorusername = Escape($_POST['users']);
     $author = Escape($_POST['author']);
     $catid = Escape($_POST['category']);
     $date = date('Y-m-d');
@@ -40,9 +42,9 @@ if(isset($_POST['update']))
         move_uploaded_file($imagetemp,"/cms/images/$image");
     }
     
-    $updatepostquery = "UPDATE POST SET Post_Category_Id=$catid,Post_Title='$title',Post_Author='$author',
-                        Post_Date='$date',Post_Image='$image',Post_Content='$content',Post_Tags='$tags',
-                        Post_Comment_Count=$comment,Post_Status='$status' WHERE Id=$editid";
+    $updatepostquery = "UPDATE POST SET Post_Category_Id=$catid,Post_Title='$title',Post_Author_User_Name='$authorusername',
+                        Post_Author='$author',Post_Date='$date',Post_Image='$image',Post_Content='$content',
+                        Post_Tags='$tags',Post_Comment_Count=$comment,Post_Status='$status' WHERE Id=$editid";
     $updatedrows = mysqli_query($sqlconnection,$updatepostquery);
     if(!$updatedrows){
         die("Update query failed".mysqli_error($sqlconnection));
@@ -81,6 +83,27 @@ if(isset($_POST['update']))
         </select>
     </div>
     <div class="form-group">
+       <label for="users">Users</label>
+       <select id="users" name="users">
+           <?php
+            $getusersquery = "SELECT * FROM USER";
+            $users = mysqli_query($sqlconnection,$getusersquery);
+            while($row = mysqli_fetch_assoc($users))
+            {
+                $userid = $row['User_Id'];
+                $username = $row['User_Name'];
+                if($username == $postauthorusername)
+                {
+                    echo "<option selected value='$username'>{$username}</option>";
+                }
+                else{
+                    echo "<option value='$username'>{$username}</options>";
+                }
+            }
+            ?>
+        </select>
+    </div>
+    <div class="form-group">
         <label for="author">Post Author</label>
         <input class="form-control" type="text" name="author" value="<?php echo $postauthor; ?>">
     </div>
@@ -100,7 +123,7 @@ if(isset($_POST['update']))
         <label for="tags">Post Tags</label>
         <input class="form-control" type="text" name="tags" value="<?php echo $posttags; ?>">
     </div>
-        <div class="form-group">
+    <div class="form-group">
         <label for="status">Post Status</label>
         <select id="status" class="browser-default custom-select" name="status">
             <?php
@@ -123,7 +146,7 @@ if(isset($_POST['update']))
             ?>
         </select>
     </div>
-        <div class="form-group">
+    <div class="form-group">
         <label for="comment">Post Comment Count</label>
         <input class="form-control" type="text" name="comment" value="<?php echo $postcomments; ?>">
     </div>

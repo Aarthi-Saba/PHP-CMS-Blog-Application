@@ -4,6 +4,7 @@ if(isset($_POST['submit_new_post']))
 
     $posttitle = Escape($_POST['title']);
     $postcategory = Escape($_POST['category']);
+    $postauthorusername = Escape($_POST['users']);
     /*$selectquery = "SELECT * FROM CATEGORY WHERE CategoryTitle=$category LIMIT 1";
     $selectedcategory = mysqli_query($sqlconnection,$selectquery);  */
     $postauthor = Escape($_POST['author']);
@@ -20,8 +21,9 @@ if(isset($_POST['submit_new_post']))
     if($filetype == "jpeg" || $filetype == "jpg")
     {
         move_uploaded_file($postimagetemp,$targetfile);
-        $insertquery = "INSERT INTO POST (Post_Category_Id,Post_Title,Post_Author,Post_Date,Post_Image,Post_Content,Post_Tags,
-                        Post_Status) VALUES ($postcategory,'$posttitle','$postauthor','$postdate','$postimage','$postcontent','$posttags',
+        $insertquery = "INSERT INTO POST (Post_Category_Id,Post_Title,Post_Author_User_Name,Post_Author,Post_Date,
+                        Post_Image,Post_Content,Post_Tags,Post_Status) VALUES($postcategory,'$posttitle',
+                        '$postauthorusername','$postauthor','$postdate','$postimage','$postcontent','$posttags',
                         '$poststatus')";
         $insertedrows = mysqli_query($sqlconnection,$insertquery);
         if($insertedrows)
@@ -30,6 +32,7 @@ if(isset($_POST['submit_new_post']))
             echo "<p class='bg-success col-xs-7'>Post Added ! &emsp;<a href='../post.php?p_id={$postid}'>View Post</a> | <a href ='Posts.php'>View All Posts</a></p>";
         }
         else{
+            echo $postcontent;
             echo "OOPS something went wrong !";
         }
     }
@@ -62,7 +65,7 @@ if(isset($_POST['submit_new_post']))
             }
             ?>
         </select>
-    <!--</div>
+    </div>
         <div class="form-group">
        <label for="users">Users</label>
        <select id="users" name="users">
@@ -73,11 +76,11 @@ if(isset($_POST['submit_new_post']))
             {
                 $userid = $row['User_Id'];
                 $username = $row['User_Name'];
-                echo "<option value='$userid'>{$username}</option>";
+                echo "<option value='$username'>{$username}</option>";
             }
             ?>
         </select>
-    </div>-->
+    </div>
     <div class="form-group">
         <label for="author">Post Author</label>
         <input class="form-control" type="text" name="author">

@@ -95,12 +95,23 @@ if(isset($_POST['checkBoxArray']))
     <tbody>
        <?php 
         global $sqlconnection;
-        //$postquery = "SELECT * FROM POST ORDER BY ID DESC";
-        $postjoinquery = "SELECT POST.Id,POST.Post_Category_Id,POST.Post_Title,POST.Post_Author,POST.Post_Date,
+        $currentuser = GetUserName();
+        if(is_admin()){
+            $postjoinquery = "SELECT POST.Id,POST.Post_Category_Id,POST.Post_Title,POST.Post_Author,POST.Post_Date,
+                             POST.Post_Image,POST.Post_Content,POST.Post_Tags,POST.Post_Comment_Count,POST.Post_Status,
+                             POST.Post_Views_Count,CATEGORY.CategoryId,CATEGORY.CategoryTitle FROM POST LEFT JOIN CATEGORY
+                             ON POST.Post_Category_Id = CATEGORY.CategoryId ORDER BY POST.Id DESC";
+            $allposts = mysqli_query($sqlconnection,$postjoinquery);            
+        }
+        else{
+             $postjoinquery = "SELECT POST.Id,POST.Post_Category_Id,POST.Post_Title,POST.Post_Author,POST.Post_Date,
                          POST.Post_Image,POST.Post_Content,POST.Post_Tags,POST.Post_Comment_Count,POST.Post_Status,
                          POST.Post_Views_Count,CATEGORY.CategoryId,CATEGORY.CategoryTitle FROM POST LEFT JOIN CATEGORY
-                         ON POST.Post_Category_Id = CATEGORY.CategoryId ORDER BY POST.Id DESC";
-        $allposts = mysqli_query($sqlconnection,$postjoinquery);
+                         ON POST.Post_Category_Id = CATEGORY.CategoryId WHERE Post.Post_Author_User_Name = '$currentuser' ORDER BY POST.Id DESC";
+            $allposts = mysqli_query($sqlconnection,$postjoinquery);
+        }
+        //$postquery = "SELECT * FROM POST ORDER BY ID DESC";
+
         while($row = mysqli_fetch_assoc($allposts))
         {
             $postid = $row['Id'];

@@ -4,7 +4,7 @@ function is_admin()
 {
     global $sqlconnection;
     $currentuserid ='';
-    if(isset($_SESSION['userid']))
+    if(IsLoggedIn())
     {
         $currentuserid = $_SESSION['userid'];
     }
@@ -20,11 +20,36 @@ function is_admin()
         }
     }
     else{
-        die("Query failed".mysqli_error($sqlconnection));
+        return false;
     }
     
 }
-
+/**** Get logged in user name ************/
+function GetUserName()
+{
+    if(isset($_SESSION['username'])){
+        $user = Escape($_SESSION['username']);
+        return $user;
+    }
+    return "";
+}
+/***** Get Full name of logged in User ******/
+function GetUserFullName()
+{
+    if(isset($_SESSION['firstname']) || isset($_SESSION['lastname'])){
+        $userfullname = Escape($_SESSION['firstname'])." ".Escape($_SESSION ['lastname']);
+        return $userfullname;
+    }
+    return "LoggedIn User";
+}
+/**** Get current user id ****/
+function GetUserId()
+{
+    if(IsLoggedIn()){
+        return isset(($_SESSION['userid'])) ? Escape($_SESSION['userid']) : "";
+    }
+}
+/******** Update new details to user *********/
 function UpdateUser($userimage)
 {
     $oldimage = $userimage;

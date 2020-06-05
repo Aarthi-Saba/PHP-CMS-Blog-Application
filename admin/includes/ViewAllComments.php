@@ -18,7 +18,7 @@
         global $sqlconnection;
         $commentjoinquery = "SELECT COMMENT.Comment_Id,COMMENT.Comment_Author,COMMENT.Comment_Email,COMMENT.Comment_Content,
                         COMMENT.Comment_Post_Id,COMMENT.Comment_Status,COMMENT.Comment_Date,POST.Id,POST.Post_Title 
-                        FROM COMMENT LEFT JOIN POST ON COMMENT.Comment_Post_Id=POST.Id ORDER BY COMMENT.Comment_Date DESC";
+                        FROM COMMENT LEFT JOIN POST ON COMMENT.Comment_Post_Id=POST.Id ORDER BY COMMENT.Comment_Id DESC";
         $allcomments = mysqli_query($sqlconnection,$commentjoinquery);
         while($row = mysqli_fetch_assoc($allcomments))
         {

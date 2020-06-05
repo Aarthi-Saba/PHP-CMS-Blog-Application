@@ -84,7 +84,7 @@
                             <span class="error"><?php  echo isset($error['passworderr']) ? ($error['passworderr']) :''?></span>
                         </div>
                 
-                        <input type="submit" name="submit" id="btn-login" class="btn btn-custom btn-lg btn-block" value="Register">
+                        <input type="submit" name="submit" id="btn-login" class="btn btn-primary btn-lg btn-block" value="Register">
                     </form>
                  
                 </div>
